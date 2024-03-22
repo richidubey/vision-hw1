@@ -209,13 +209,33 @@ float exparg;
 image add_image(image a, image b)
 {
     // TODO
-    return make_image(1,1,1);
+
+    image ret = make_image(a.w, a.h, a.c);
+
+    for(int c=0; c<a.c; c++) {
+        for(int j=0; j<a.h;j++) {
+            for(int i=0; i<a.w;  i++) {
+                set_pixel(ret, i, j, c, get_pixel(a, i, j, c)+get_pixel(b, i, j, c));
+            }
+        }
+    }
+
+    return ret;
 }
 
 image sub_image(image a, image b)
 {
-    // TODO
-    return make_image(1,1,1);
+   image ret = make_image(a.w, a.h, a.c);
+
+    for(int c=0; c<a.c; c++) {
+        for(int j=0; j<a.h;j++) {
+            for(int i=0; i<a.w;  i++) {
+                set_pixel(ret, i, j, c, get_pixel(a, i, j, c) - get_pixel(b, i, j, c));
+            }
+        }
+    }
+
+    return ret;
 }
 
 image make_gx_filter()
