@@ -169,25 +169,39 @@ image make_gaussian_filter(float sigma)
         ret = make_box_filter(6*sigma);
 
 float val;
-    for(int j=0; j<ret.h; j++) {
-        for(int i=0; i<ret.w; i++) {
-            val =  1 / (exp((i*i + j*j) /2*sigma*sigma) * 2*M_PI*sigma*sigma);
-            set_pixel(ret, i, j, 0, val);
-            printf("%f|\t",val);
+int jfal, ifal;
+
+ jfal=0;
+    // for(int j=-1*ret.h/2; j<=ret.h/2; j++,jfal++) {
+    //     ifal=0;
+    //     for(int i=-1*ret.w/2; i<=ret.w/2; i++, ifal++) {
+    //         printf("%d,%d(%d, %d)|\t",i,j,ifal,jfal);
+    //     }
+    //     printf("\n");
+    // }
+float exparg;
+    jfal=0;
+    for(int j=-1*ret.h/2; j<=ret.h/2; j++,jfal++) {
+        ifal=0;
+        for(int i=-1*ret.w/2; i<=ret.w/2; i++, ifal++) {
+            exparg = -(i*i + j*j) / (2*sigma*sigma);
+            val =   expf(exparg)/(2*M_PI*sigma*sigma); 
+            set_pixel(ret, ifal, jfal, 0, val);
+            //printf("%f |\t", val);
         }
-        printf("\n");
+        //printf("\n");
     }
 
     l1_normalize(ret);
 
-    printf("\n");printf("\n");
+    //printf("\n");printf("\n");
 
-    for(int j=0; j<ret.h; j++) {
-        for(int i=0; i<ret.w; i++) {
-            printf("%f|\t",get_pixel(ret, i, j, 0));
-        }
-        printf("\n");
-    }
+    // for(int j=0; j<ret.h; j++) {
+    //     for(int i=0; i<ret.w; i++) {
+    //         printf("%f|\t",get_pixel(ret, i, j, 0));
+    //     }
+    //     printf("\n");
+    // }
 
     return ret;
 }
