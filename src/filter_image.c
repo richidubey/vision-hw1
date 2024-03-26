@@ -240,25 +240,94 @@ image sub_image(image a, image b)
 
 image make_gx_filter()
 {
-    // TODO
-    return make_image(1,1,1);
+    image ret = make_box_filter(3);
+
+    set_pixel(ret,0,0,0, -1);
+    set_pixel(ret,1,0,0, 0);
+    set_pixel(ret,2,0,0, 1);
+
+    set_pixel(ret,0,1,0, -2);
+    set_pixel(ret,1,1,0, 0);
+    set_pixel(ret,2,1,0, 2);
+
+    set_pixel(ret,0,2,0, -1);
+    set_pixel(ret,1,2,0, 0);
+    set_pixel(ret,2,2,0, 1);
+
+    return ret;
 }
 
 image make_gy_filter()
 {
-    // TODO
-    return make_image(1,1,1);
+    image ret = make_box_filter(3);
+
+    set_pixel(ret,0,0,0, -1);
+    set_pixel(ret,1,0,0, -2);
+    set_pixel(ret,2,0,0, -1);
+
+    set_pixel(ret,0,1,0, 0);
+    set_pixel(ret,1,1,0, 0);
+    set_pixel(ret,2,1,0, 0);
+
+    set_pixel(ret,0,2,0, 1);
+    set_pixel(ret,1,2,0, 2);
+    set_pixel(ret,2,2,0, 1);
+
+    return ret;
 }
 
 void feature_normalize(image im)
 {
-    // TODO
+    float minval=300, maxval=-300;
+
+    for(int c=0; c<im.c;c++) {
+        for(int j=0; j<im.h; j++) {
+            for(int i=0; i<im.w; i++) {
+                if(get_pixel(im, i,j,c) < minval)
+                    minval = get_pixel(im, i,j,c);
+                
+                if(get_pixel(im, i,j,c) > maxval)
+                    maxval = get_pixel(im, i,j,c);
+            }
+        }
+    }
+
+    float range = maxval-minval;
+
+    for(int c=0; c<im.c;c++) {
+        for(int j=0; j<im.h; j++) {
+            for(int i=0; i<im.w; i++) {
+                set_pixel(im, i,j, c, (get_pixel(im, i, j, c) - minval)/range);
+            }
+        }
+    }
 }
 
 image *sobel_image(image im)
 {
-    // TODO
-    return calloc(2, sizeof(image));
+    image* ret = calloc(2, sizeof(image));
+
+    image sobelh, sobelv;
+
+    sobelh= make_gx_filter();
+    sobelv= make_gx_filter();
+
+    image inter1 = convolve_image(im, sobelh, 0);
+    image inter2 = convolve_image(im, sobelv, 0);
+
+    for(int j=0;j<im.h;j++) {
+        for(int i=0;i<im.w; i++) {
+            set_pixel(ret[0], i, j, 0, sqrtf(powf(get_pixel(inter1, i,j,0),2) + powf(get_pixel(inter2, i,j,0),2)));
+        }
+    }
+
+    for(int j=0;j<im.h;j++) {
+        for(int i=0;i<im.w; i++) {
+            set_pixel(ret[1], i, j, 0, atan2f(get_pixel(inter2, i,j,0), get_pixel(inter1, i,j,0)));
+        }
+    }
+
+    return ret;
 }
 
 image colorize_sobel(image im)

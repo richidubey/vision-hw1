@@ -67,13 +67,23 @@
 # save_image(blur, "dog-gauss21")
 
 
-print("Testing retrieval of low and high frequnecy image")
+# print("Testing retrieval of low and high frequnecy image")
+# from uwimg import *
+# im = load_image("data/dog.jpg")
+# f = make_gaussian_filter(2)
+# lfreq = convolve_image(im, f, 1)
+# hfreq = im - lfreq
+# reconstruct = lfreq + hfreq
+# save_image(lfreq, "low-frequency")
+# save_image(hfreq, "high-frequency")
+# save_image(reconstruct, "reconstruct")
+
+
+
+print("Testing sobel filter")
 from uwimg import *
 im = load_image("data/dog.jpg")
-f = make_gaussian_filter(2)
-lfreq = convolve_image(im, f, 1)
-hfreq = im - lfreq
-reconstruct = lfreq + hfreq
-save_image(lfreq, "low-frequency")
-save_image(hfreq, "high-frequency")
-save_image(reconstruct, "reconstruct")
+res = sobel_image(im)
+mag = res[0]
+#feature_normalize(mag)
+save_image(mag, "magnitude")
